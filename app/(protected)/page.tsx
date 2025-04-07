@@ -1,6 +1,6 @@
 import Chart from "@/components/Chart";
 import Header from "@/components/Header";
-import Table from "@/components/Table";
+import Table from "@/components/Table/Table";
 
 const Page = async () => {
   const response = await fetch(

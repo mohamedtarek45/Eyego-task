@@ -2,9 +2,9 @@
 
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import Th from "./Table/Th";
-import PaginationDemo from "./Pagination";
-import { Button } from "./ui/button";
+import Th from "./Th";
+import PaginationDemo from "../Pagination";
+import { Button } from "../ui/button";
 type fetchDataProps =
   | {
       id: number;
