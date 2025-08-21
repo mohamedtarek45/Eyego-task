@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useDeferredValue } from "react";
 import Th from "./Th";
 import PaginationDemo from "../Pagination";
 import { Button } from "../ui/button";
@@ -17,6 +17,7 @@ type fetchDataProps =
   | [];
 const Table = ({ data }: { data: fetchDataProps }) => {
   const [fiterNAME, setFilterNAME] = useState("");
+  const test1 = useDeferredValue(fiterNAME);
   const [initalData, setInitalData] = useState<fetchDataProps>(data);
   const [page, setPage] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(
@@ -47,22 +48,37 @@ const Table = ({ data }: { data: fetchDataProps }) => {
     return;
   }, [page, data, sortConfig, initalData]);
 
-  useEffect(() => {
-    if (fiterNAME.length > 0) {
-      console.log("useEffect2");
-      const timeoutId = setTimeout(() => {
-        const NewData = initalData.filter((item) =>
-          item.name.toLowerCase().includes(fiterNAME.toLowerCase())
-        );
-        setShowData(NewData.slice((page - 1) * 10, page * 10));
-        setNumberOfPages(Math.ceil(NewData.length / 10));
-        setPage(1);
-      }, 500);
-      return () => clearTimeout(timeoutId);
-    }
-    setNumberOfPages(Math.ceil(initalData.length / 10));
-  }, [fiterNAME, initalData, page]);
+  // useEffect(() => {
+  //   if (fiterNAME.length >= 0) {
+  //     console.log("useEffect2");
+  //     const timeoutId = setTimeout(() => {
+  //       const NewData = initalData.filter((item) =>
+  //         item.name.toLowerCase().includes(fiterNAME.toLowerCase())
+  //       );
+  //       setShowData(NewData.slice((page - 1) * 10, page * 10));
+  //       setNumberOfPages(Math.ceil(NewData.length / 10));
+  //       setPage(1);
+  //     }, 500);
+  //     return () => clearTimeout(timeoutId);
+  //   }
+  //   setNumberOfPages(Math.ceil(initalData.length / 10));
+  // }, [fiterNAME, initalData, page]);
 
+  useEffect(() => {
+    if (fiterNAME.length >= 0) {
+      const NewData = initalData.filter((item) =>
+        item.name.toLowerCase().includes(test1.toLowerCase())
+      );
+      setShowData(NewData.slice((page - 1) * 10, page * 10));
+      setNumberOfPages(Math.ceil(NewData.length / 10));
+      setPage(1);
+      setNumberOfPages(Math.ceil(initalData.length / 10));
+    }
+    console.log("------------Start of Render-------");
+    console.log("fiterNAME", fiterNAME);
+    console.log("test1", test1);
+    console.log("--End of render--")
+  }, [test1]);
   useEffect(() => {
     console.log("useEffect3");
     if (sortConfig.length > 0) {
