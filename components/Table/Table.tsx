@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Th from "./Th";
 import PaginationDemo from "../Pagination";
 import { Button } from "../ui/button";
+import DownloadPDF from "../DownlosdPdf";
+import DownloadExcel from "../DownloadExcel";
 type fetchDataProps =
   | {
       id: number;
@@ -18,6 +20,7 @@ type fetchDataProps =
 const Table = ({ data }: { data: fetchDataProps }) => {
   const [fiterNAME, setFilterNAME] = useState("");
   const [initalData, setInitalData] = useState<fetchDataProps>(data);
+  const [dataToExport, setDataToExport] = useState<fetchDataProps>(data);
   const [page, setPage] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(
     data ? Math.ceil(data.length / 10) : 0
@@ -56,6 +59,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
         );
         setShowData(NewData.slice((page - 1) * 10, page * 10));
         setNumberOfPages(Math.ceil(NewData.length / 10));
+        setDataToExport(NewData);
         setPage(1);
       }, 500);
       return () => clearTimeout(timeoutId);
@@ -119,6 +123,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
             onClick={() => {
               setSortCohfig([]);
               setFilterNAME("");
+              setDataToExport(data);
             }}
           >
             Clear Sort&Filter
@@ -126,7 +131,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
         )}
       </div>
       <div className="w-full overflow-x-auto sm:overflow-x-hidden px-3 sm:px-0">
-        <table className="w-full  text-center">
+        <table className="w-full  text-center" >
           <thead className="bg-gray-100 border-b text-center">
             <tr>
               <Th
@@ -183,6 +188,10 @@ const Table = ({ data }: { data: fetchDataProps }) => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-end gap-7 my-5">
+      <DownloadPDF data={dataToExport}/>
+      <DownloadExcel data={dataToExport}/>
       </div>
       <PaginationDemo
         page={page}
