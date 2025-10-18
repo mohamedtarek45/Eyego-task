@@ -1,13 +1,12 @@
-
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useMemo, useState,useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Th from "./Th";
 import PaginationDemo from "../Pagination";
 import { Button } from "../ui/button";
-// import DownloadPDF from "../DownlosdPdf";
-// import DownloadExcel from "../DownloadExcel";
+import DownloadPDF from "../DownlosdPdf";
+import DownloadExcel from "../DownloadExcel";
 type fetchDataProps =
   | {
       id: number;
@@ -26,11 +25,11 @@ const Table = ({ data }: { data: fetchDataProps }) => {
     { col: string; dir: "ASC" | "DESC" }[]
   >([]);
   useEffect(() => {
-    const t=setTimeout(() => {
+    const t = setTimeout(() => {
       setFilterName(search);
     }, 700);
     return () => clearTimeout(t);
-  },[search]);
+  }, [search]);
   const sortedData = useMemo(() => {
     if (sortConfig.length === 0) return data;
     const newData = [...data];
@@ -43,7 +42,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
       }
       return 0;
     });
-    return newData
+    return newData;
   }, [data, sortConfig]);
   const filteredData = useMemo(() => {
     if (!filterName) return sortedData;
@@ -67,7 +66,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
     };
   }, [filteredData, page]);
 
-    const handleSort = (column: string) => {
+  const handleSort = (column: string) => {
     setSortConfig((prev) => {
       const index = prev.findIndex((item) => item.col === column);
       if (index === -1) {
@@ -169,8 +168,8 @@ const Table = ({ data }: { data: fetchDataProps }) => {
         </table>
       </div>
       <div className="flex justify-end gap-7 my-5">
-        {/* <DownloadPDF data={dataToExport}/>
-      <DownloadExcel data={dataToExport}/> */}
+        <DownloadPDF data={filteredData} />
+        <DownloadExcel data={filteredData} />
       </div>
       <PaginationDemo
         page={page}
@@ -182,5 +181,3 @@ const Table = ({ data }: { data: fetchDataProps }) => {
 };
 
 export default Table;
-
-
