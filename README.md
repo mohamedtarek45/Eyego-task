@@ -31,6 +31,11 @@ This is a responsive dashboard built as part of the Eyego Frontend Internship te
 Here is a recorded demo showcasing the functionality of the dashboard:
 🔗 [Watch Video Demo](https://drive.google.com/file/d/1bBxdcbD8zuG07uL05g8kW3OGlo7GEP4l/view?usp=sharing)
 
+🌐 Live Demo
+
+You can view the live deployed version here:
+🔗 View on Vercel: [Eyego Dashboard](https://eyego-task-beta.vercel.app/)
+
 ## 📦 Installation & Setup
 
 ```bash
