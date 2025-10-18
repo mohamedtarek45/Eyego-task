@@ -17,21 +17,13 @@ const DownloadExcel = ({ data }: { data: fetchDataProps }) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
     XLSX.writeFile(workbook, "Users.xlsx", { compression: true });
   };
-    if (!data || data.length === 0) {
-    return (
-      <button
-        disabled
-        className="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed"
-      >
-        No Data to Export
-      </button>
-    );
-  }
+
   return (
     <div>
       <button
+      disabled={!data || data.length === 0}
         onClick={handleDownload}
-      className="px-6 py-3 bg-blue-400 text-white rounded-lg hover:bg-green-700 hover:cursor-pointer"
+      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-green-700 hover:cursor-pointer disabled:bg-gray-400 disabled:text-white "
       >
         Download Excel
       </button>
