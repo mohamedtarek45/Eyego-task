@@ -1,12 +1,13 @@
+
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useMemo, useState,useEffect } from "react";
 import Th from "./Th";
 import PaginationDemo from "../Pagination";
 import { Button } from "../ui/button";
-import DownloadPDF from "../DownlosdPdf";
-import DownloadExcel from "../DownloadExcel";
+// import DownloadPDF from "../DownlosdPdf";
+// import DownloadExcel from "../DownloadExcel";
 type fetchDataProps =
   | {
       id: number;
@@ -18,80 +19,56 @@ type fetchDataProps =
     }[]
   | [];
 const Table = ({ data }: { data: fetchDataProps }) => {
-  const [fiterNAME, setFilterNAME] = useState("");
-  const [initalData, setInitalData] = useState<fetchDataProps>(data);
-  const [dataToExport, setDataToExport] = useState<fetchDataProps>(data);
+  const [search, setSearch] = useState("");
+  const [filterName, setFilterName] = useState("");
   const [page, setPage] = useState(1);
-  const [numberOfPages, setNumberOfPages] = useState(
-    data ? Math.ceil(data.length / 10) : 0
-  );
-  const [showData, setShowData] = useState<
-    | {
-        id: number;
-        name: string;
-        email: string;
-        age: number;
-        status: boolean;
-        country: string;
-      }[]
-    | []
+  const [sortConfig, setSortConfig] = useState<
+    { col: string; dir: "ASC" | "DESC" }[]
   >([]);
-  const [sortConfig, setSortCohfig] = useState<
-    [{ col: string; dir: "ASC" | "DESC" }] | []
-  >([]);
-
   useEffect(() => {
-    console.log("useEffect1");
-    if (sortConfig.length === 0) {
-      setShowData(data.slice((page - 1) * 10, page * 10));
-    } else {
-      setShowData(initalData.slice((page - 1) * 10, page * 10));
-    }
-    return;
-  }, [page, data, sortConfig, initalData]);
+    const t=setTimeout(() => {
+      setFilterName(search);
+    }, 700);
+    return () => clearTimeout(t);
+  },[search]);
+  const sortedData = useMemo(() => {
+    if (sortConfig.length === 0) return data;
+    const newData = [...data];
+    newData.sort((a, b) => {
+      for (const sort of sortConfig) {
+        const aVal = a[sort.col as keyof typeof a];
+        const bVal = b[sort.col as keyof typeof b];
+        if (aVal > bVal) return sort.dir === "ASC" ? 1 : -1;
+        if (aVal < bVal) return sort.dir === "ASC" ? -1 : 1;
+      }
+      return 0;
+    });
+    return newData
+  }, [data, sortConfig]);
+  const filteredData = useMemo(() => {
+    if (!filterName) return sortedData;
+    return sortedData.filter((item) =>
+      item.name.toLowerCase().includes(filterName.toLowerCase())
+    );
+  }, [sortedData, filterName]);
 
-  useEffect(() => {
-    if (fiterNAME.length > 0) {
-      console.log("useEffect2");
-      const timeoutId = setTimeout(() => {
-        const NewData = initalData.filter((item) =>
-          item.name.toLowerCase().includes(fiterNAME.toLowerCase())
-        );
-        setShowData(NewData.slice((page - 1) * 10, page * 10));
-        setNumberOfPages(Math.ceil(NewData.length / 10));
-        setDataToExport(NewData);
-        setPage(1);
-      }, 500);
-      return () => clearTimeout(timeoutId);
+  const { paginatedData, totalPages } = useMemo(() => {
+    let total = 1;
+    if (filteredData.length > 10) {
+      total = Math.ceil(filteredData.length / 10);
     }
-    setNumberOfPages(Math.ceil(initalData.length / 10));
-  }, [fiterNAME, initalData, page]);
+    const start = (page - 1) * 10;
+    const end = start + 10;
 
-  useEffect(() => {
-    console.log("useEffect3");
-    if (sortConfig.length > 0) {
-      setInitalData((prev) => {
-        const NewData = [...prev];
-        NewData.sort((a, b) => {
-          for (const sort of sortConfig) {
-            /* @ts-expect-error: We are sure that `find` returns a value when the index is found. */
-            if (a[sort.col] > b[sort.col]) {
-              return sort.dir === "ASC" ? 1 : -1;
-            }
-            /* @ts-expect-error: We are sure that `find` returns a value when the index is found. */
-            if (a[sort.col] < b[sort.col]) {
-              return sort.dir === "ASC" ? -1 : 1;
-            }
-          }
-          return 0;
-        });
-        return NewData;
-      });
-    }
-  }, [sortConfig]);
-  const handleSort = (column: string) => {
-    /* @ts-expect-error: We are sure that `find` returns a value when the index is found. */
-    setSortCohfig((prev) => {
+    const paginatedData = filteredData.slice(start, end);
+    return {
+      paginatedData: paginatedData,
+      totalPages: total,
+    };
+  }, [filteredData, page]);
+
+    const handleSort = (column: string) => {
+    setSortConfig((prev) => {
       const index = prev.findIndex((item) => item.col === column);
       if (index === -1) {
         return [...prev, { col: column, dir: "ASC" }];
@@ -104,6 +81,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
       };
       return [...copy];
     });
+    setPage(1);
   };
 
   return (
@@ -113,17 +91,18 @@ const Table = ({ data }: { data: fetchDataProps }) => {
           className="w-[90%] sm:w-[50%] mx-auto"
           type="text"
           placeholder="Serach by name"
-          onChange={(e) => setFilterNAME(e.target.value)}
-          value={fiterNAME}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+          value={search}
         />
-        {(sortConfig.length > 0 || fiterNAME.length > 0) && (
+        {(sortConfig.length > 0 || filterName.length > 0) && (
           <Button
             variant="destructive"
             className="hover:cursor-pointer"
             onClick={() => {
-              setSortCohfig([]);
-              setFilterNAME("");
-              setDataToExport(data);
+              setSortConfig([]);
+              setFilterName("");
             }}
           >
             Clear Sort&Filter
@@ -131,7 +110,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
         )}
       </div>
       <div className="w-full overflow-x-auto sm:overflow-x-hidden px-3 sm:px-0">
-        <table className="w-full  text-center" >
+        <table className="w-full  text-center">
           <thead className="bg-gray-100 border-b text-center">
             <tr>
               <Th
@@ -167,7 +146,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
             </tr>
           </thead>
           <tbody>
-            {showData.map((item) => (
+            {paginatedData.map((item) => (
               <tr key={item.id} className="border-b hover:bg-gray-50">
                 <td className="py-2 px-4 text-sm text-gray-700">{item.name}</td>
                 <td className="py-2 px-4 text-sm text-gray-700">
@@ -190,16 +169,18 @@ const Table = ({ data }: { data: fetchDataProps }) => {
         </table>
       </div>
       <div className="flex justify-end gap-7 my-5">
-      <DownloadPDF data={dataToExport}/>
-      <DownloadExcel data={dataToExport}/>
+        {/* <DownloadPDF data={dataToExport}/>
+      <DownloadExcel data={dataToExport}/> */}
       </div>
       <PaginationDemo
         page={page}
         setPage={setPage}
-        numberOfPages={numberOfPages}
+        numberOfPages={totalPages}
       />
     </div>
   );
 };
 
 export default Table;
+
+
