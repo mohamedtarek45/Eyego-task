@@ -102,6 +102,7 @@ const Table = ({ data }: { data: fetchDataProps }) => {
             onClick={() => {
               setSortConfig([]);
               setFilterName("");
+              setSearch("");
             }}
           >
             Clear Sort&Filter
