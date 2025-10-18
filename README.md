@@ -29,7 +29,7 @@ This is a responsive dashboard built as part of the Eyego Frontend Internship te
 ---
 🎥 Demo
 Here is a recorded demo showcasing the functionality of the dashboard:
-🔗 [Watch Video Demo](https://drive.google.com/file/d/1bBxdcbD8zuG07uL05g8kW3OGlo7GEP4l/view?usp=sharing)
+🔗 [Watch Video Demo](https://drive.google.com/file/d/1WQ6jedgaz5lypirMv51kZhagpO9eg8d_/view?usp=sharing)
 
 🌐 Live Demo
 
