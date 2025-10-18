@@ -22,6 +22,7 @@ This is a responsive dashboard built as part of the Eyego Frontend Internship te
   - Sorting
   - Filtering
   - Pagination
+  - **PDF & Excel Export**  
 - ✅ Chart component using Recharts
 - ✅ Global state management with Redux Toolkit
 
@@ -37,3 +38,12 @@ git clone https://github.com/mohamedtarek45/Eyego-task.git
 cd eyego-dashboard
 npm install
 npm run dev
+
+## 🐳 Docker Support
+
+You can also run the project using Docker:
+
+```bash
+docker pull mohamedtarek45/eyegotask
+docker run -p 3000:3000 mohamedtarek45/eyegotask
+```
